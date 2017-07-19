@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -39,12 +40,12 @@
       </GridPane>
       <HBox layoutX="293.0" layoutY="267.0">
          <children>
-            <Button layoutX="366.0" layoutY="261.0" mnemonicParsing="false" prefWidth="80.0" text="OK">
+            <Button fx:id="OK" layoutX="366.0" layoutY="261.0" mnemonicParsing="false" onAction="#handleOk" prefWidth="80.0" text="OK">
                <HBox.margin>
                   <Insets left="10.0" />
                </HBox.margin>
             </Button>
-            <Button layoutX="428.0" layoutY="261.0" mnemonicParsing="false" prefWidth="80.0" text="Cancel">
+            <Button fx:id="Cancel" layoutX="428.0" layoutY="261.0" mnemonicParsing="false" onAction="#handleCancel" prefWidth="80.0" text="Cancel">
                <HBox.margin>
                   <Insets left="10.0" />
                </HBox.margin>
