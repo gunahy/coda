@@ -32,6 +32,7 @@ public class RootLayoutController {
         File selectedFile = fileChooser.showOpenDialog(mainApp.getPrimaryStage());
         String filePath = selectedFile.getPath();
 
+        if (filePath != null)
         mainApp.loadUserDataFromFile(filePath);
 
     }

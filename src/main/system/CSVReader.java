@@ -14,7 +14,6 @@ import java.io.IOException;
 public class CSVReader{
 
     private static final String DELIMITER = ";";
-    private static final String PATH = "E:/shared/AD update/";
     private static final int COLUMN_COUNT = 7;
     private static final int COLUMN_FULL_NAME = 0;
     private static final int COLUMN_POSITION = 1;
