@@ -1,27 +1,3 @@
-/**
- * The MIT License
- *
- * Copyright (c) 2010-2012 www.myjeeva.com
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE. 
- * 
- */
 package main.system;
 
 import javafx.collections.ObservableList;
@@ -29,23 +5,12 @@ import javafx.collections.ObservableList;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-import javax.naming.Context;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.InitialDirContext;
-import javax.naming.directory.SearchControls;
-import javax.naming.directory.SearchResult;
+import javax.naming.*;
+import javax.naming.directory.*;
+
 import static main.system.IUsers.*;
 import static main.system.Settings.*;
 
-/**
- * Query Active Directory using Java
- * 
- * @filename ActiveDirectory.java
- * @author <a href="mailto:jeeva@myjeeva.com">Jeevanandam Madanagopal</a>
- * @copyright &copy; 2010-2012 www.myjeeva.com
- */
 public class ActiveDirectory{
 	// Logger
 	private static final Logger LOG = Logger.getLogger(ActiveDirectory.class.getName());
@@ -54,10 +19,10 @@ public class ActiveDirectory{
     private Properties properties;
     private DirContext dirContext;
     private SearchControls searchCtls;
-	private String[] returnAttributes = { CN, TITLE, DEPARTMENT, COMPANY, INFO };
+	private String[] returnAttributes = { CN, TITLE, DEPARTMENT, COMPANY, INFO, DISTINGUISHED_NAME };
     private String domainBase;
     private String baseFilter = "(&((&(objectCategory=Person)(objectClass=User)))";
-
+    private ModificationItem[] mods = new ModificationItem[4];
     private ObservableList<User> adUsersList;
 
 
@@ -77,10 +42,12 @@ public class ActiveDirectory{
         //initializing active directory LDAP connection
         try {
 			dirContext = new InitialDirContext(properties);
-		} catch (NamingException e) {
+		} catch (AuthenticationException e){
+            LOG.severe(e.getMessage());
+        } catch (NamingException e) {
 			LOG.severe(e.getMessage());
 		}
-        
+
         //default domain base for search
         domainBase = getDomainBase(domainController);
         
@@ -102,9 +69,30 @@ public class ActiveDirectory{
      */
     public NamingEnumeration<SearchResult> searchUser(String searchValue, String searchBy, String searchBase) throws NamingException {
     	String filter = getFilter(searchValue, searchBy);    	
-    	String base = (null == searchBase) ? domainBase : getDomainBase(searchBase); // for eg.: "DC=myjeeva,DC=com";
+    	String base = (null == searchBase) ? domainBase : getDomainBase(searchBase);
     	
 		return this.dirContext.search(base, filter, this.searchCtls);
+    }
+
+    public DirContext getDirContext() {
+        return dirContext;
+    }
+
+
+    public void replaceAttributes(User selectedUser){
+
+        try {
+            mods[0] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, new BasicAttribute(TITLE, selectedUser.getPosition()));
+            mods[1] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, new BasicAttribute(DEPARTMENT, selectedUser.getDepartment()));
+            mods[2] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, new BasicAttribute(COMPANY, selectedUser.getCompany()));
+            mods[3] = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, new BasicAttribute(INFO, selectedUser.getBirthday()));
+
+            dirContext.modifyAttributes(selectedUser.getDistinguishedName(), mods);
+
+        } catch (NamingException e1) {
+            e1.printStackTrace();
+        }
+
     }
 
     /**

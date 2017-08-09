@@ -38,11 +38,6 @@ public class Main extends Application {
     private ActiveDirectory adConnection;
 
 
-//    public Main() {
-//        User user = new User.UserBuilder("Иванов Иван").addEvent("1").addPosition("engineer").build();
-//        userData.add(user);
-//    }
-
     @Override
     public void start(Stage primaryStage) throws Exception{
         this.primaryStage = primaryStage;
@@ -171,6 +166,8 @@ public class Main extends Application {
                     NamingEnumeration<SearchResult> searchResult = adConnection.searchUser(user.getFullName(), CN, user.getCompanyProperty().getSearchBase());
                     if (searchResult.hasMoreElements()){
                         user.setInAdFound("+");
+                        SearchResult sr = (SearchResult) searchResult.next();
+                        user.setDistinguishedName(sr.getName());
                     }
                 } catch (NamingException e) {
                     LOG.severe(e.getMessage());

@@ -16,7 +16,7 @@
                <children>
                   <TableView fx:id="userTableView" prefHeight="298.0" prefWidth="250.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <columns>
-                        <TableColumn fx:id="inAdFoundColumn" maxWidth="50.0" minWidth="30.0" prefWidth="30.0" text="\@" />
+                        <TableColumn fx:id="inAdFoundColumn" maxWidth="50.0" minWidth="30.0" prefWidth="30.0" resizable="false" text="\@" />
                       <TableColumn fx:id="fullNameColumn" prefWidth="100.0" text="ФИО" />
                       <TableColumn fx:id="eventColumn" prefWidth="75.0" text="Статус" />
                     </columns>
