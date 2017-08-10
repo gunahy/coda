@@ -2,6 +2,7 @@ package main.system;
 
 import javafx.collections.ObservableList;
 
+import java.io.IOException;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -9,7 +10,6 @@ import javax.naming.*;
 import javax.naming.directory.*;
 
 import static main.system.IUsers.*;
-import static main.system.Settings.*;
 
 public class ActiveDirectory{
 	// Logger
@@ -24,6 +24,7 @@ public class ActiveDirectory{
     private String baseFilter = "(&((&(objectCategory=Person)(objectClass=User)))";
     private ModificationItem[] mods = new ModificationItem[4];
     private ObservableList<User> adUsersList;
+    private Settings settings = new Settings();
 
 
     /**
@@ -31,13 +32,13 @@ public class ActiveDirectory{
      * 
      * @param domainController a {@link String} object - domain controller name for LDAP connection
      */
-    public ActiveDirectory(String domainController) {
+    public ActiveDirectory(String domainController) throws IOException {
         properties = new Properties();        
 
         properties.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
         properties.put(Context.PROVIDER_URL, "LDAP://" + domainController);
-        properties.put(Context.SECURITY_PRINCIPAL, LOGIN);
-        properties.put(Context.SECURITY_CREDENTIALS, PASSWORD);
+        properties.put(Context.SECURITY_PRINCIPAL, settings.getLogin());
+        properties.put(Context.SECURITY_CREDENTIALS, settings.getPassword());
         
         //initializing active directory LDAP connection
         try {
@@ -89,8 +90,8 @@ public class ActiveDirectory{
 
             dirContext.modifyAttributes(selectedUser.getDistinguishedName(), mods);
 
-        } catch (NamingException e1) {
-            e1.printStackTrace();
+        } catch (NamingException e) {
+            e.printStackTrace();
         }
 
     }
@@ -143,5 +144,6 @@ public class ActiveDirectory{
 		}
 		return dn;
 	}
+
 
 }

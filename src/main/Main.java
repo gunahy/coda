@@ -28,6 +28,7 @@ import static main.system.IUsers.CN;
 
 public class Main extends Application {
     private static final Logger LOG = Logger.getLogger(ActiveDirectory.class.getName());
+    private static final int COMPANY_COUNT = 7;
     private Stage primaryStage;
     private CSVReader csvReader;
     private BorderPane rootLayout;
@@ -35,8 +36,9 @@ public class Main extends Application {
 
     private ObservableList<User> userData = FXCollections.observableArrayList();
     private ObservableList<User> bufferedUserData = FXCollections.observableArrayList();
+    //TODO создать массив объектов ActiveDirectory и все их подключить
     private ActiveDirectory adConnection;
-
+    private ActiveDirectory[] adConnections;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -44,6 +46,7 @@ public class Main extends Application {
         this.primaryStage.setTitle("Сотрудники");
         this.primaryStage.getIcons().add(new Image("file:resources/images/icon.png"));
 
+        initADConnections();
         initRootLayout();
         showUserOverview();
 
@@ -52,7 +55,7 @@ public class Main extends Application {
     /**
      * Инициализация главной сцены
      */
-    public void initRootLayout(){
+    private void initRootLayout(){
         try {
             //Загрузка макета из fxml файла
             FXMLLoader loader = new FXMLLoader();
@@ -76,12 +79,22 @@ public class Main extends Application {
         }
     }
 
+    private void initADConnections() throws IOException {
+        adConnections = new ActiveDirectory[COMPANY_COUNT];
+        adConnections[0] = new ActiveDirectory(CompanyProperties.MS11.getServerName());
+        adConnections[1] = new ActiveDirectory(CompanyProperties.MO15.getServerName());
+        adConnections[2] = new ActiveDirectory(CompanyProperties.MO29.getServerName());
+        adConnections[3] = new ActiveDirectory(CompanyProperties.MO36.getServerName());
+        adConnections[4] = new ActiveDirectory(CompanyProperties.MO87.getServerName());
+        adConnections[5] = new ActiveDirectory(CompanyProperties.SU.getServerName());
+        adConnections[6] = new ActiveDirectory(CompanyProperties.DSU.getServerName());
 
+    }
     /**
      * Вывод пользовательских данных в табличной части и
      * информации "Подробно"
      */
-    public void showUserOverview(){
+    private void showUserOverview(){
         try {
             //Загружаем форму списка пользователей
             FXMLLoader loader = new FXMLLoader();
@@ -131,25 +144,32 @@ public class Main extends Application {
 
         userData.clear();
         csvReader = new CSVReader(fileName);
+        userData.addAll(csvReader.getUsers());
 
-        // Проверяем текущее подключение к ActiveDirectory
-        if (adConnection != null) adConnection.closeLdapConnection();
-
-        //Для каждой организации созадать подлкючение и поискать там пользователей
-        for (CompanyProperties cp : CompanyProperties.values()) {
-            adConnection = new ActiveDirectory(cp.getServerName());
-
-            // Фильтруем список пользователей по организации и сравниваем с базой ActiveDirectory
-            bufferedUserData.addAll(csvReader.getUsersByCompany(cp));
-            compareToAD(adConnection, bufferedUserData);
-            userData.addAll(bufferedUserData);
-
-            // Очищаем список для новой итерации
-            bufferedUserData.clear();
-
-            // Закрываем текущее соедниение
-            adConnection.closeLdapConnection();
+        // Для каждого подключения создается поток и проивзодится поиск пользователя в базе AD
+        for (ActiveDirectory adc : adConnections) {
+         Runnable task = () -> compareToAD(adc, userData);
+         Thread tr = new Thread(task);
+         tr.start();
         }
+
+//        // Проверяем текущее подключение к ActiveDirectory
+//        if (adConnection != null) adConnection.closeLdapConnection();
+//        //Для каждой организации созадать подлкючение и поискать там пользователей
+//        for (CompanyProperties cp : CompanyProperties.values()) {
+//            adConnection = new ActiveDirectory(cp.getServerName());
+//
+//            // Фильтруем список пользователей по организации и сравниваем с базой ActiveDirectory
+//            bufferedUserData.addAll(csvReader.getUsersByCompany(cp));
+//            compareToAD(adConnection, bufferedUserData);
+//            userData.addAll(bufferedUserData);
+//
+//            // Очищаем список для новой итерации
+//            bufferedUserData.clear();
+//
+//            // Закрываем текущее соедниение
+//            adConnection.closeLdapConnection();
+//        }
 
     }
 
@@ -177,12 +197,20 @@ public class Main extends Application {
         }
     }
 
+    //TODO Создать метод который изменяет аттрибуты пользователей в AD добавить кнопку на форме
+
     /**
      * Возвращает список польователей для отображения в таблице
      * @return список объектов пользователи
      */
     public ObservableList<User> getUserData() {
         return userData;
+    }
+
+    public void updateUsersADInfo(User user){
+        for (ActiveDirectory adc : adConnections) {
+            adc.replaceAttributes(user);
+        }
     }
 
     public static void main(String[] args) {

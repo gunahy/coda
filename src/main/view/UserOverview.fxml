@@ -67,6 +67,11 @@
                               <Insets right="5.0" />
                            </HBox.margin>
                         </Button>
+                        <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#handleUpdateUser" prefWidth="70.0" text="Update">
+                           <HBox.margin>
+                              <Insets right="5.0" />
+                           </HBox.margin>
+                        </Button>
                         <Button layoutX="276.0" layoutY="257.0" mnemonicParsing="false" onAction="#handleDeleteUser" prefWidth="70.0" text="Delete" />
                      </children>
                      <opaqueInsets>

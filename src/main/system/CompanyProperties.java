@@ -4,6 +4,7 @@ package main.system;
  * Created by Kobzar on 16.06.2017.
  */
 public enum CompanyProperties {
+    //TODO добавить запись для объектов типа "DC=ms11,DC=biz"
     MS11("ms11.biz", "akagi.ms11.biz", "Мостострой - 11 АО"),
     MO36("mo36.ms11.biz", "mc1.mo36.ms11.biz", "Мостоотряд - 36"),
     MO15("mo15.ms11.biz", "mo15-1.mo15.ms11.biz", "Мостоотряд - 15"),

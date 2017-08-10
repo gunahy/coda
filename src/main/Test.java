@@ -9,7 +9,7 @@ import main.system.CompanyProperties;
 public class Test {
     public static void main(String[] args) {
 
-        ActiveDirectory ad = new ActiveDirectory(CompanyProperties.MS11.getServerName());
+      //  ActiveDirectory ad = new ActiveDirectory(CompanyProperties.MS11.getServerName());
 
     }
 }

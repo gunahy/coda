@@ -1,5 +1,6 @@
 package main.view;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
@@ -125,5 +126,20 @@ public class UserOverviewController {
     }
 
 
+    @FXML
+    private void handleUpdateUser() {
+        User selectedUser = userTableView.getSelectionModel().getSelectedItem();
+        if(selectedUser != null){
+            mainApp.updateUsersADInfo(selectedUser);
+        } else {
+            // Ничего не выбрано.
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.initOwner(mainApp.getPrimaryStage());
+            alert.setTitle("Предупреждение!");
+            alert.setHeaderText("Не выбран ни один сотрудник");
+            alert.setContentText("Пожалуйста, выбирете сотрудника в табличной части");
 
+            alert.showAndWait();
+        }
+    }
 }
