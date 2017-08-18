@@ -1,11 +1,9 @@
 package main.system;
 
 import javafx.collections.ObservableList;
-
 import java.io.IOException;
 import java.util.Properties;
 import java.util.logging.Logger;
-
 import javax.naming.*;
 import javax.naming.directory.*;
 
@@ -39,7 +37,8 @@ public class ActiveDirectory{
         properties.put(Context.PROVIDER_URL, "LDAP://" + domainController);
         properties.put(Context.SECURITY_PRINCIPAL, settings.getLogin());
         properties.put(Context.SECURITY_CREDENTIALS, settings.getPassword());
-        
+        properties.put(Context.REFERRAL, "follow");
+
         //initializing active directory LDAP connection
         try {
 			dirContext = new InitialDirContext(properties);
@@ -64,7 +63,7 @@ public class ActiveDirectory{
      * 
      * @param searchValue a {@link String} object - search value used for AD search for eg. username or email
      * @param searchBy a {@link String} object - scope of search by username or by email id
-     * @param searchBase a {@link String} object - search base value for scope tree for eg. DC=myjeeva,DC=com
+     * @param searchBase a {@link String} object - search base value for scope tree
      * @return search result a {@link NamingEnumeration} object - active directory search result
      * @throws NamingException
      */
@@ -130,7 +129,7 @@ public class ActiveDirectory{
      * creating a domain base value from domain controller name
      * 
      * @param base a {@link String} object - name of the domain controller
-     * @return a {@link String} object - base name for eg. DC=myjeeva,DC=com
+     * @return a {@link String} object - base name
      */
 	private static String getDomainBase(String base) {
 		char[] namePair = base.toUpperCase().toCharArray();

@@ -29,4 +29,11 @@
         </menus>
       </MenuBar>
    </top>
+   <left>
+      <HBox prefHeight="575.0" prefWidth="92.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button mnemonicParsing="false" onAction="#searchInAD" text="AD search" />
+         </children>
+      </HBox>
+   </left>
 </BorderPane>

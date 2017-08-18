@@ -14,8 +14,9 @@ public final class User implements IUsers {
             event,
             birthday,
             eventDate,
-            inAdFound,
-            distinguishedName;
+            inAdFound;
+
+    private String distinguishedName;
 
     private CompanyProperties companyProperties;
 
@@ -28,7 +29,7 @@ public final class User implements IUsers {
         this.birthday = new SimpleStringProperty(builder.birthday);
         this.eventDate = new SimpleStringProperty(builder.eventDate);
         this.inAdFound = new SimpleStringProperty("-");
-        this.distinguishedName = new SimpleStringProperty("");
+        //this.distinguishedName = new String("");
 
         for (CompanyProperties cp : CompanyProperties.values()){
             if (cp.getCompanyName().equals(getCompany()))
@@ -158,17 +159,14 @@ public final class User implements IUsers {
         this.companyProperties = companyProperties;
     }
 
-    public void setDistinguishedName(String distinguishedName) {
-        this.distinguishedName.set(distinguishedName);
-    }
-
     public String getDistinguishedName() {
-        return distinguishedName.get();
-    }
-
-    public SimpleStringProperty distinguishedNameProperty() {
         return distinguishedName;
     }
+
+    public void setDistinguishedName(String distinguishedName) {
+        this.distinguishedName = distinguishedName;
+    }
+
 
     /**
      * Builder-класс для объектов User

@@ -147,11 +147,7 @@ public class Main extends Application {
         userData.addAll(csvReader.getUsers());
 
         // Для каждого подключения создается поток и проивзодится поиск пользователя в базе AD
-        for (ActiveDirectory adc : adConnections) {
-         Runnable task = () -> compareToAD(adc, userData);
-         Thread tr = new Thread(task);
-         tr.start();
-        }
+        searchInAD();
 
 //        // Проверяем текущее подключение к ActiveDirectory
 //        if (adConnection != null) adConnection.closeLdapConnection();
@@ -170,9 +166,15 @@ public class Main extends Application {
 //            // Закрываем текущее соедниение
 //            adConnection.closeLdapConnection();
 //        }
-
     }
 
+    public void searchInAD(){
+        for (ActiveDirectory adc : adConnections) {
+            Runnable task = () -> compareToAD(adc, userData);
+            Thread tr = new Thread(task);
+            tr.start();
+        }
+    }
     /**
      * Поиск сотрудников в базе ActiveDirectory. Если сотрудник найден, то его поле
      * inAdFound становится true

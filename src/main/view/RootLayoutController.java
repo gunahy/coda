@@ -1,5 +1,6 @@
 package main.view;
 
+
 import javafx.fxml.FXML;
 import javafx.stage.FileChooser;
 import main.Main;
@@ -35,5 +36,10 @@ public class RootLayoutController {
         if (filePath != null)
         mainApp.loadUserDataFromFile(filePath);
 
+    }
+
+    @FXML
+    private void searchInAD() {
+        mainApp.searchInAD();
     }
 }
